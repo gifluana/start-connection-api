@@ -10,27 +10,22 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Security Middleware
-app.use(helmet()); // Adds security headers
+app.use(helmet());
 
-// Rate Limiting
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 100 requests
+    windowMs: 15 * 60 * 1000,
+    max: 100,
 });
 app.use(limiter);
 
-// CORS Configuration
 app.use(cors({
-    origin: 'https://lunazstudios.com', // Trusted domain
+    origin: 'https://lunazstudios.com',
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'x-api-key'],
 }));
 
-// JSON Middleware
 app.use(express.json());
 
-// API Key Middleware
 app.use((req, res, next) => {
     const apiKey = req.headers['x-api-key'];
     if (apiKey !== process.env.API_KEY) {
@@ -39,7 +34,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// Game Routes
 app.get('/start', (req, res) => {
     const firstStage = gameData[0];
     if (!firstStage) {
@@ -83,7 +77,6 @@ app.post('/answers', (req, res) => {
     res.json({ response, nextStage, nextQuestion });
 });
 
-// Start the server
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
